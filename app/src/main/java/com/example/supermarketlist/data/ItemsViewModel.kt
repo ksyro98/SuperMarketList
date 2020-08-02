@@ -4,9 +4,6 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
-import com.example.supermarketlist.data.AppDatabase
-import com.example.supermarketlist.data.Item
-import com.example.supermarketlist.data.ItemsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
