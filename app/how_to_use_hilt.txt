@@ -1,0 +1,35 @@
+This is a file to keep notes on how to use Dagger Hilt for DI.
+
+
+1. Create a new class which inherits from the Application class and is annotated by @HiltAndroidApp.
+Then add android:name=".<YourApplicationClassName>" in your manifest under application.
+2. Find the Activity or Fragment in which you want to use Hilt and annotate it with @AndroidEntryPoint.
+3. Annotate every field in this Activity/Fragment with @Inject and remove any "private" visibility modifiers.
+4. Remove the code in which you manually add value in those fields.
+5. Find the classes of those field and annotate their constructor with @Inject.
+6. If one of those fields needs to be a Singleton annotate its class with @Singleton.
+7. Repeat 5-6 for every field used in an annotate constructor.
+8. If you need to annotate the constructor of an interface or abstract class or any other class that
+cannot be constructor injected, create a new class (let's call it NameModule class).
+9. Annotate NameModule with @InstallIn(ApplicationComponent::class) or @InstallIn(AndroidComponent::class)
+and with @Module.
+10. In NameModule create a provide method, returning an instance of the class you cannot constructor-inject
+and annotate it with @Provide (and @Singleton if needed).
+11. If this cannot happen because there is no way to get an instance of your class/interface instead
+of a provide method create an abstract bind method, which takes an implementation of the
+abstract class/interface as an argument and returns the abstract class/interface. Annotate this
+function with @Binds.
+12. Make sure to constructor-inject the implementation class used in the bind function.
+13. If there are more than 1 implementations for the interface you are trying to bind you will need
+to use annotation qualifiers. To find more about them check here:
+https://codelabs.developers.google.com/codelabs/android-hilt/#8 (part 9).
+14. That's all! You should be able to run your app now.
+
+
+Note: This process doesn't work with ViewModel. For how to use Hilt with a ViewModel check here:
+https://developer.android.com/training/dependency-injection/hilt-jetpack
+
+Resources:
+To better learn how to work with Hilt you can see this codelab:
+https://codelabs.developers.google.com/codelabs/android-hilt/#0
+

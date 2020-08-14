@@ -7,12 +7,13 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.supermarketlist.R
 import com.example.supermarketlist.data.Item
+import javax.inject.Inject
 
 
-class ListAdapter(val onClick: (clickedItemId: Int) -> Unit) :
-    RecyclerView.Adapter<ListAdapter.ListViewHolder>() {
+class ListAdapter @Inject constructor() : RecyclerView.Adapter<ListAdapter.ListViewHolder>() {
 
     private var items = emptyList<Item>()
+    private lateinit var onClick: (clickedItemId: Int) -> Unit
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item, parent, false)
@@ -23,7 +24,9 @@ class ListAdapter(val onClick: (clickedItemId: Int) -> Unit) :
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
         holder.itemTextView.text = items[position].itemName
         holder.itemTextView.setOnClickListener {
-            onClick(items[position].id)
+            if(::onClick.isInitialized) {
+                onClick(items[position].id)
+            }
         }
     }
 
@@ -32,6 +35,10 @@ class ListAdapter(val onClick: (clickedItemId: Int) -> Unit) :
     fun setItems(items: List<Item>){
         this.items = items
         notifyDataSetChanged()
+    }
+
+    fun setOnClick(callback: (clickedItemId: Int) -> Unit){
+        this.onClick = callback
     }
 
     class ListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){

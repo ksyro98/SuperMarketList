@@ -1,22 +1,28 @@
 package com.example.supermarketlist.data
 
 import android.app.Application
+import androidx.hilt.Assisted
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.components.ApplicationComponent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ItemsViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val repository: ItemsRepository
-    val allItems: LiveData<List<Item>>
+class ItemsViewModel @ViewModelInject constructor(
+    application: Application,
+    private val repository: ItemsRepository,
+    @Assisted private val savedStateHandle: SavedStateHandle
+) : AndroidViewModel(application) {
 
-    init {
-        val itemDao = AppDatabase.getDatabase(application).itemDao()
-        repository = ItemsRepository(itemDao)
-        allItems = repository.allItems
-    }
+    val allItems: LiveData<List<Item>> = repository.allItems
 
     fun insert(itemName: String) {
         viewModelScope.launch(Dispatchers.IO) {

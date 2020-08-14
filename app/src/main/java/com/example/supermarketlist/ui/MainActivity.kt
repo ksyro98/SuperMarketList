@@ -4,37 +4,41 @@ import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.supermarketlist.R
 import com.example.supermarketlist.data.ItemsViewModel
+import com.example.supermarketlist.toast
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var itemsViewModel: ItemsViewModel
+    private val itemsViewModel by viewModels<ItemsViewModel>()
+    @Inject lateinit var itemsAdapter: ListAdapter
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        val adapter = ListAdapter { itemId ->
-            itemsViewModel.delete(itemId)
-        }
-
+        
         recyclerView.apply{
             layoutManager = LinearLayoutManager(this@MainActivity)
             setHasFixedSize(true)
-            this.adapter = adapter
+            this.adapter = itemsAdapter
         }
 
-        itemsViewModel = ViewModelProvider(this).get(ItemsViewModel::class.java)
+        itemsAdapter.setOnClick { itemId ->
+            itemsViewModel.delete(itemId)
+        }
+
 
         itemsViewModel.allItems.observe(this, Observer { items ->
-            items?.let { adapter.setItems(it) }
+            items?.let { itemsAdapter.setItems(it) }
         })
 
 

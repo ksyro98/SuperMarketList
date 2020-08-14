@@ -3,8 +3,9 @@ package com.example.supermarketlist.data
 import androidx.lifecycle.LiveData
 import com.example.supermarketlist.data.Item
 import com.example.supermarketlist.data.ItemDao
+import javax.inject.Inject
 
-class ItemsRepository (private val itemDao: ItemDao) {
+class ItemsRepository @Inject constructor(private val itemDao: ItemDao) {
 
     val allItems: LiveData<List<Item>> = itemDao.getAll()
 
